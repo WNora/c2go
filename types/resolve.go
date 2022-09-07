@@ -3,7 +3,6 @@ package types
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -571,13 +570,6 @@ func ParseFunction(s string) (f []string, r []string, err error) {
 	return
 }
 
-var (
-	rxconst      = regexp.MustCompile(`\bconst\b`)
-	rxvolatile   = regexp.MustCompile(`\bvolatile\b`)
-	rxUUrestrict = regexp.MustCompile(`\b__restrict\b`)
-	rxrestrict   = regexp.MustCompile(`\brestrict\b`)
-)
-
 // CleanCType - remove from C type not Go type
 func CleanCType(s string) (out string) {
 	out = s
@@ -591,10 +583,10 @@ func CleanCType(s string) (out string) {
 	out = strings.Replace(out, "( *)", "(*)", -1)
 
 	// Remove any whitespace or attributes that are not relevant to Go.
-	out = rxconst.ReplaceAllLiteralString(out, "")
-	out = rxvolatile.ReplaceAllLiteralString(out, "")
-	out = rxUUrestrict.ReplaceAllLiteralString(out, "")
-	out = rxrestrict.ReplaceAllLiteralString(out, "")
+	out = strings.Replace(out, "const", "", -1)
+	out = strings.Replace(out, "volatile", "", -1)
+	out = strings.Replace(out, "__restrict", "", -1)
+	out = strings.Replace(out, "restrict", "", -1)
 	out = strings.Replace(out, "\t", "", -1)
 	out = strings.Replace(out, "\n", "", -1)
 	out = strings.Replace(out, "\r", "", -1)
